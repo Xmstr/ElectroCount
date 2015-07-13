@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">ElectroCount</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="resultCountNumber">000000</string>
+    <string name="countedLabelText">Натикало:</string>
+    <string name="countedNumberMain">000000</string>
+    <string name="whatCostLabelText">Что стоит:</string>
+    <string name="costMainText">000 р.</string>
+    <string name="differenceNumberText">На 00 р. больше</string>
+    <string name="differenceMonthText">чем в прошлом месяце</string>
+    <string name="title_activity_statistic">statistic</string>
+    <string name="message_text">Text of your message</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="maybe">Maybe</string>
+    <string name="edit_text">Редактировать</string>
+    <string name="save_text">Сохранить</string>
+    <string name="delete">Удалить</string>
+    <string name="count_ok_text">ОК</string>
+    <string name="count_cancel_text">Отмена</string>
+    <string name="new_count_title">Новое измерение</string>
+    <string name="menu_delete_all_text">Удалить все измерения</string>
+    <string name="menu_about_text">Справка</string>
+</resources>
