@@ -28,6 +28,17 @@ public class CountsDataSource {
         dbHelper.close();
     }
 
+    public void createPrice(String text) {
+        ContentValues values = new ContentValues();
+        values.put(myDb.COLUMN_PRICE, text);
+        long insertId = dbHelper.getWritableDatabase().insert(myDb.TABLE_PRICES, null, values);
+    }
+    public void updatePrice(String text) {
+        ContentValues values = new ContentValues();
+        values.put(myDb.COLUMN_PRICE, text);
+        long updateId = dbHelper.getWritableDatabase().update(myDb.TABLE_PRICES, values, myDb.COLUMN_ID + " = " + text, null);
+    }
+
     public void createItem(String text, String date) {
         ContentValues values = new ContentValues();
         values.put(myDb.COLUMN_DATE, date);
@@ -35,13 +46,19 @@ public class CountsDataSource {
         long insertId = dbHelper.getWritableDatabase().insert(myDb.TABLE, null, values);
     }
     public String getLastItemNumber(){
-        Cursor cursor = dbHelper.getReadableDatabase().query(myDb.TABLE, allColumns, null, null, null, null, myDb.COLUMN_TEXT + " DESC", "1");
+
+        Cursor cursor = dbHelper.getReadableDatabase().query(myDb.TABLE, allColumns, null, null, null, null, myDb.COLUMN_ID + " DESC", "1");
         String lastText = null;
         if (cursor.moveToFirst()) {
             lastText = cursor.getString(cursor.getColumnIndex(myDb.COLUMN_TEXT));
             cursor.close();
         }
+        else lastText = "00000";
         return lastText;
+    }
+    public void deleteAll(){
+        dbHelper.getWritableDatabase().delete(myDb.TABLE,null,null);
+        System.out.println("DATABASE CLEARED");
     }
 
     public void updateItemText(Item item, String text) {

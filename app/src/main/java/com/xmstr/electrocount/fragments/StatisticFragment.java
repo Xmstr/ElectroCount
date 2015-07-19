@@ -41,7 +41,7 @@ public class StatisticFragment extends Fragment{
                     @Override
                     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
                         getDialog().setTitle(R.string.edit_text);
-                        final View rootView = inflater.inflate(R.layout.dialog, container, false);
+                        final View rootView = inflater.inflate(R.layout.dialog_edit, container, false);
                         final EditText editText = (EditText) rootView.findViewById(R.id.editText);
                         editText.setText(item.text);
                         Button btnPositive = (Button) rootView.findViewById(R.id.btn_positive);
