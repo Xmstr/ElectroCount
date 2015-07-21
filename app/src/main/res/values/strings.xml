@@ -7,8 +7,8 @@
     <string name="countedLabelText">Натикало:</string>
     <string name="countedNumberMain">000000</string>
     <string name="whatCostLabelText">Что стоит:</string>
-    <string name="costMainText">000 р.</string>
-    <string name="differenceNumberText">На 00 р. больше</string>
+    <string name="costMainText">000 \u20bd</string>
+    <string name="differenceNumberText">На 00 \u20bd больше</string>
     <string name="differenceMonthText">чем в прошлом месяце</string>
     <string name="title_activity_statistic">statistic</string>
     <string name="message_text">Text of your message</string>

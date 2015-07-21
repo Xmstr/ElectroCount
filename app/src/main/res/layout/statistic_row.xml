@@ -9,5 +9,6 @@
         android:layout_height="wrap_content"
         android:text="New Text"
         android:id="@+id/textView"
-        android:textSize="30sp" />
+        android:textSize="30sp"
+        android:layout_gravity="center_horizontal" />
 </LinearLayout>

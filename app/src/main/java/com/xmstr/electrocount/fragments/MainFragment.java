@@ -1,9 +1,11 @@
 package com.xmstr.electrocount.fragments;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -55,8 +57,10 @@ public class MainFragment extends Fragment {
     private void calculateCost() {
         // MAIN COST
         DecimalFormat df = new DecimalFormat("####0.00");
-        double cost = Double.parseDouble(dataSource.getLastItemNumber());
-        mainCost.setText(String.valueOf(df.format(cost / 7)) + " руб.");
+        double current = Double.parseDouble(dataSource.getLastItemNumber());
+        double prev = Double.parseDouble(dataSource.getPrevItemNumber());
+        double price = Double.parseDouble(dataSource.getLastPrice());
+        mainCost.setText(String.valueOf(df.format((current - prev)*price)) + " руб.");
     }
 
     @Override
@@ -75,7 +79,6 @@ public class MainFragment extends Fragment {
         calculateCost();
 
         fab.setOnClickListener(new View.OnClickListener() {
-            public boolean confirmedSame = true;
 
             @Override
             public void onClick(View view) {
@@ -116,7 +119,7 @@ public class MainFragment extends Fragment {
                                     calculateCost();
                                     dismiss();
                                 } else {
-                                    Toast.makeText(getActivity(), "Неправильный ввод", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), "Неверный показатель", Toast.LENGTH_SHORT).show();
                                     dismiss();
                                 }
                             }
@@ -124,40 +127,9 @@ public class MainFragment extends Fragment {
                             private boolean checkNumber(final EditText text) {
                                 if (text.getText() == null
                                         || text.getText().length() == 0
-                                        || ((Integer.parseInt(text.getText().toString())) < Integer.parseInt(dataSource.getLastItemNumber())))
+                                        || ((Integer.parseInt(text.getText().toString())) <= Integer.parseInt(dataSource.getLastItemNumber())))
                                     return false;
-                                else if ((Integer.parseInt(text.getText().toString())) == Integer.parseInt(dataSource.getLastItemNumber())) {
-                                    new DialogFragment(){
-                                        @Nullable
-                                        @Override
-                                        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-                                            getDialog().setTitle("Уверены?");
-                                            final View rootView = inflater.inflate(R.layout.dialog_confirm, container, false);
-                                            TextView confirmText = (TextView)rootView.findViewById(R.id.confirmTextView);
-                                            confirmText.setText("Показания совпадают. Применить?");
-                                            Button btnPositive = (Button) rootView.findViewById(R.id.btn_positive);
-                                            Button btnNegative = (Button) rootView.findViewById(R.id.btn_negative);
-                                            btnPositive.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    confirmedSame = true;
-                                                    Toast.makeText(getActivity(), "Равны", Toast.LENGTH_SHORT).show();
-                                                    dismiss();
-                                                }
-                                            });
-                                            btnNegative.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    confirmedSame = false;
-                                                    dismiss();
-                                                }
-                                            });
-                                            return rootView;
-                                        }
-                                    }.show(getFragmentManager(), "dialog_confirm");
-                                    return confirmedSame;
-                                }
-                                else return confirmedSame;
+                                else return true;
                             }
                         });
                         btnNegative.setOnClickListener(new View.OnClickListener() {
@@ -194,11 +166,22 @@ public class MainFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_delete_all:
-                dataSource.deleteAll();
-                setNumber();
-                calculateCost();
-                adapter.refresh(dataSource.getAllItems());
-                Toast.makeText(getActivity(), "Очищено", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Удаление статистики").setMessage("Очистить показания?").setPositiveButton("ДА", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dataSource.deleteAll();
+                        setNumber();
+                        calculateCost();
+                        adapter.refresh(dataSource.getAllItems());
+                        Toast.makeText(getActivity(), "Очищено", Toast.LENGTH_SHORT).show();
+                    }
+                }).setNegativeButton("НЕТ", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getActivity(), "Отмена", Toast.LENGTH_SHORT).show();
+                    }
+                }).create().show();
                 break;
             case R.id.action_info:
                 Toast.makeText(getActivity(), "INFO", Toast.LENGTH_SHORT).show();

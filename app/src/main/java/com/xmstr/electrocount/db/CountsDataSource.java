@@ -19,6 +19,8 @@ public class CountsDataSource {
     private myDb dbHelper;
     private String[] allColumns = {myDb.COLUMN_ID,
             myDb.COLUMN_DATE, myDb.COLUMN_TEXT};
+    private String[] allPriceColumns = {myDb.COLUMN_ID,
+            myDb.COLUMN_PRICE};
 
     public CountsDataSource(Context context) {
         dbHelper = new myDb(context);
@@ -38,6 +40,16 @@ public class CountsDataSource {
         values.put(myDb.COLUMN_PRICE, text);
         long updateId = dbHelper.getWritableDatabase().update(myDb.TABLE_PRICES, values, myDb.COLUMN_ID + " = " + text, null);
     }
+    public String getLastPrice(){
+        Cursor cursor = dbHelper.getReadableDatabase().query(myDb.TABLE_PRICES, allPriceColumns, null, null, null, null, myDb.COLUMN_ID + " DESC", "1");
+        String lastPrice = null;
+        if (cursor.moveToFirst()) {
+            lastPrice = cursor.getString(cursor.getColumnIndex(myDb.COLUMN_PRICE));
+            cursor.close();
+        }
+        else lastPrice = "3.7";
+        return lastPrice;
+    }
 
     public void createItem(String text, String date) {
         ContentValues values = new ContentValues();
@@ -56,8 +68,20 @@ public class CountsDataSource {
         else lastText = "00000";
         return lastText;
     }
+    public String getPrevItemNumber(){
+
+        Cursor cursor = dbHelper.getReadableDatabase().query(myDb.TABLE, allColumns, null, null, null, null, myDb.COLUMN_ID + " DESC", "2");
+        String prevText = null;
+        if (cursor.moveToNext()) {
+            prevText = cursor.getString(cursor.getColumnIndex(myDb.COLUMN_TEXT));
+            cursor.close();
+        }
+        else prevText = "00000";
+        return prevText;
+    }
     public void deleteAll(){
         dbHelper.getWritableDatabase().delete(myDb.TABLE,null,null);
+        dbHelper.close();
         System.out.println("DATABASE CLEARED");
     }
 

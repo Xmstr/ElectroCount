@@ -89,7 +89,7 @@
         android:layout_below="@+id/mainCostTextView"
         android:layout_centerHorizontal="true"
         android:textSize="30sp"
-        android:layout_marginTop="30dp" />
+        android:layout_marginTop="20dp" />
 
     <TextView
         android:layout_width="wrap_content"
