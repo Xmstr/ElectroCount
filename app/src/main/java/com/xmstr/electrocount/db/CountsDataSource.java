@@ -50,6 +50,14 @@ public class CountsDataSource {
         else lastPrice = "3.7";
         return lastPrice;
     }
+    public Boolean checkPrice(){
+        Cursor cursor = dbHelper.getReadableDatabase().query(myDb.TABLE_PRICES, allPriceColumns, null, null, null, null, myDb.COLUMN_ID + " DESC", "1");
+        if (cursor.moveToFirst()) {
+            cursor.close();
+            return true;
+        }
+        else return false;
+    }
 
     public void createItem(String text, String date) {
         ContentValues values = new ContentValues();
@@ -71,16 +79,19 @@ public class CountsDataSource {
     public String getPrevItemNumber(){
 
         Cursor cursor = dbHelper.getReadableDatabase().query(myDb.TABLE, allColumns, null, null, null, null, myDb.COLUMN_ID + " DESC", "2");
-        String prevText = null;
-        if (cursor.moveToNext()) {
+        String prevText = "00000";
+        if (cursor.moveToFirst()) {
+            if (cursor.getCount() > 1) {
+                cursor.moveToNext();
+            }
             prevText = cursor.getString(cursor.getColumnIndex(myDb.COLUMN_TEXT));
-            cursor.close();
         }
-        else prevText = "00000";
+        cursor.close();
         return prevText;
     }
     public void deleteAll(){
         dbHelper.getWritableDatabase().delete(myDb.TABLE,null,null);
+        dbHelper.getWritableDatabase().delete(myDb.TABLE_PRICES,null,null);
         dbHelper.close();
         System.out.println("DATABASE CLEARED");
     }

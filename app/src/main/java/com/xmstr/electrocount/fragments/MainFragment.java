@@ -2,12 +2,9 @@ package com.xmstr.electrocount.fragments;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,6 +24,9 @@ import com.xmstr.electrocount.db.CountsDataSource;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Created by xmast_000 on 11.07.2015.
@@ -37,6 +37,7 @@ public class MainFragment extends Fragment {
     ItemsAdapter adapter;
     TextView mainNumber;
     TextView mainCost;
+    TextView adviceText;
 
     public MainFragment() {
         //EMPTY CONSTRUCTOR
@@ -47,12 +48,48 @@ public class MainFragment extends Fragment {
     public void onResume() {
         setNumber();
         calculateCost();
+        setAdvice();
         super.onResume();
     }
 
-    private void setNumber() {
-        mainNumber.setText(dataSource.getLastItemNumber());
+    private String prepareNumber(String number) {
+        String preparedNumber = "00000";
+        switch (number.length()) {
+            case 1:
+                preparedNumber = "0000" + number;
+                break;
+            case 2:
+                preparedNumber = "000" + number;
+                break;
+            case 3:
+                preparedNumber = "00" + number;
+                break;
+            case 4:
+                preparedNumber = "0" + number;
+                break;
+            case 5:
+                preparedNumber = number;
+                break;
+            default:
+                break;
+        }
+        return preparedNumber;
+
     }
+
+    private void setNumber() {
+        mainNumber.setText(prepareNumber(dataSource.getLastItemNumber()));
+    }
+
+    private void setAdvice() {
+        adviceText.setText(makeAdvice());
+    }
+
+    private String makeAdvice() {
+        List<String> advices = Arrays.asList(getResources().getStringArray(R.array.advices_array));
+        return advices.get(new Random().nextInt(advices.size()));
+    }
+
 
     private void calculateCost() {
         // MAIN COST
@@ -60,7 +97,7 @@ public class MainFragment extends Fragment {
         double current = Double.parseDouble(dataSource.getLastItemNumber());
         double prev = Double.parseDouble(dataSource.getPrevItemNumber());
         double price = Double.parseDouble(dataSource.getLastPrice());
-        mainCost.setText(String.valueOf(df.format((current - prev)*price)) + " руб.");
+        mainCost.setText(String.valueOf(df.format((current - prev) * price)) + " руб.");
     }
 
     @Override
@@ -75,13 +112,15 @@ public class MainFragment extends Fragment {
         FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
         // MAIN NUMBER
         mainNumber = (TextView) v.findViewById(R.id.mainNumberTextView);
+        adviceText = (TextView) v.findViewById(R.id.adviceText);
         setNumber();
         calculateCost();
-
+        setAdvice();
+        // LISTENER
         fab.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
+                if (dataSource.checkPrice()){
                 new DialogFragment() {
                     @Override
                     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -89,24 +128,8 @@ public class MainFragment extends Fragment {
                         final View rootView = inflater.inflate(R.layout.dialog, container, false);
                         final EditText editText = (EditText) rootView.findViewById(R.id.editText);
                         TextView prevNumber = (TextView) rootView.findViewById(R.id.prevNumber);
-                        prevNumber.setText(dataSource.getLastItemNumber());
+                        prevNumber.setText(prepareNumber(dataSource.getLastItemNumber()));
                         editText.setSelection(editText.length());
-                        editText.addTextChangedListener(new TextWatcher() {
-                            @Override
-                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                                //editText.setText("00000");
-                            }
-
-                            @Override
-                            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                            }
-
-                            @Override
-                            public void afterTextChanged(Editable s) {
-
-                            }
-                        });
                         Button btnPositive = (Button) rootView.findViewById(R.id.btn_positive);
                         Button btnNegative = (Button) rootView.findViewById(R.id.btn_negative);
                         btnPositive.setOnClickListener(new View.OnClickListener() {
@@ -114,13 +137,12 @@ public class MainFragment extends Fragment {
                             public void onClick(View view) {
                                 if (checkNumber(editText)) {
                                     String date = ONLY_DATE_FORMAT.format(System.currentTimeMillis());
-                                    dataSource.createItem(editText.getText().toString(), date);
+                                    dataSource.createItem(prepareNumber(editText.getText().toString()), date);
                                     setNumber();
                                     calculateCost();
                                     dismiss();
                                 } else {
                                     Toast.makeText(getActivity(), "Неверный показатель", Toast.LENGTH_SHORT).show();
-                                    dismiss();
                                 }
                             }
 
@@ -142,6 +164,51 @@ public class MainFragment extends Fragment {
                     }
                 }.show(getFragmentManager(), "dialog");
             }
+            else {
+                    new DialogFragment() {
+                        @Override
+                        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+                            getDialog().setTitle(R.string.first_count_title);
+                            final View rootView = inflater.inflate(R.layout.dialog_withprice, container, false);
+                            final EditText editText = (EditText) rootView.findViewById(R.id.editText);
+                            final EditText tariffEditText = (EditText) rootView.findViewById(R.id.tariffEditText);
+                            editText.setSelection(editText.length());
+                            Button btnPositive = (Button) rootView.findViewById(R.id.btn_positive);
+                            Button btnNegative = (Button) rootView.findViewById(R.id.btn_negative);
+                            btnPositive.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if (checkNumber(editText)) {
+                                        String date = ONLY_DATE_FORMAT.format(System.currentTimeMillis());
+                                        dataSource.createItem(prepareNumber(editText.getText().toString()), date);
+                                        dataSource.createPrice(tariffEditText.getText().toString());
+                                        setNumber();
+                                        calculateCost();
+                                        dismiss();
+                                    } else {
+                                        Toast.makeText(getActivity(), "Неверный показатель", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                private boolean checkNumber(final EditText text) {
+                                    if (text.getText() == null
+                                            || text.getText().length() == 0
+                                            || ((Integer.parseInt(text.getText().toString())) <= Integer.parseInt(dataSource.getLastItemNumber())))
+                                        return false;
+                                    else return true;
+                                }
+                            });
+                            btnNegative.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dismiss();
+                                }
+                            });
+                            return rootView;
+                        }
+                    }.show(getFragmentManager(), "dialog");
+                }
+            }
         });
 
         ImageButton statsButton = (ImageButton) v.findViewById(R.id.statisticButton);
@@ -151,6 +218,13 @@ public class MainFragment extends Fragment {
                 getFragmentManager()
                         .beginTransaction().replace(R.id.content_frame, new StatisticFragment(), StatisticFragment.class.getSimpleName())
                         .addToBackStack(null).commit();
+            }
+        });
+        ImageButton adviceButton = (ImageButton) v.findViewById(R.id.adviceButton);
+        adviceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setAdvice();
             }
         });
         return v;

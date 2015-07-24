@@ -46,7 +46,6 @@ public class myDb extends SQLiteOpenHelper {
         // on upgrade drop older tables
         db.execSQL("DROP TABLE IF EXISTS " + TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PRICES);
-
         // create new tables
         onCreate(db);
     }
