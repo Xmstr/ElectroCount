@@ -120,7 +120,7 @@ public class MainFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (dataSource.checkPrice()){
+                if (dataSource.checkForPrice()){
                 new DialogFragment() {
                     @Override
                     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -178,7 +178,7 @@ public class MainFragment extends Fragment {
                             btnPositive.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    if (checkNumber(editText)) {
+                                    if (checkNumber(editText) && checkPrice(tariffEditText)) {
                                         String date = ONLY_DATE_FORMAT.format(System.currentTimeMillis());
                                         dataSource.createItem(prepareNumber(editText.getText().toString()), date);
                                         dataSource.createPrice(tariffEditText.getText().toString());
@@ -205,6 +205,13 @@ public class MainFragment extends Fragment {
                                 }
                             });
                             return rootView;
+                        }
+
+                        private boolean checkPrice(EditText text) {
+                            if (text.getText() == null
+                                    || text.getText().length() == 0)
+                                return false;
+                            else return true;
                         }
                     }.show(getFragmentManager(), "dialog");
                 }
@@ -260,11 +267,57 @@ public class MainFragment extends Fragment {
             case R.id.action_info:
                 Toast.makeText(getActivity(), "INFO", Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.action_changeprice:
+                if (dataSource.checkForPrice()) {
+                    new DialogFragment() {
+                        @Override
+                        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+                            getDialog().setTitle(R.string.edit_tariff_text);
+                            final View rootView = inflater.inflate(R.layout.dialog_editprice, container, false);
+                            final EditText editText = (EditText) rootView.findViewById(R.id.editText);
+                            TextView prevTariff = (TextView) rootView.findViewById(R.id.prevTariff);
+                            prevTariff.setText(dataSource.getLastPrice());
+                            editText.setSelection(editText.length());
+                            Button btnPositive = (Button) rootView.findViewById(R.id.btn_positive);
+                            Button btnNegative = (Button) rootView.findViewById(R.id.btn_negative);
+                            btnPositive.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if (checkPrice(editText)) {
+                                        dataSource.updatePrice(editText.getText().toString());
+                                        setNumber();
+                                        dismiss();
+                                    } else {
+                                        Toast.makeText(getActivity(), "Неправильный тариф", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                private boolean checkPrice(final EditText text) {
+                                    if (text.getText() == null
+                                            || text.getText().length() == 0)
+                                        return false;
+                                    else return true;
+                                }
+                            });
+                            btnNegative.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dismiss();
+                                }
+                            });
+                            return rootView;
+                        }
+                    }.show(getFragmentManager(), "dialog");
+                }
+                else {
+                    Toast.makeText(getActivity(), "Тариф еще не введен", Toast.LENGTH_SHORT).show();
+                }
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
+
 
 
 }

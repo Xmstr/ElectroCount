@@ -15,6 +15,7 @@ import java.util.List;
  * Created by xmast_000 on 08.07.2015.
  */
 public class CountsDataSource {
+    long insertId;
     // Database fields
     private myDb dbHelper;
     private String[] allColumns = {myDb.COLUMN_ID,
@@ -33,12 +34,12 @@ public class CountsDataSource {
     public void createPrice(String text) {
         ContentValues values = new ContentValues();
         values.put(myDb.COLUMN_PRICE, text);
-        long insertId = dbHelper.getWritableDatabase().insert(myDb.TABLE_PRICES, null, values);
+        insertId = dbHelper.getWritableDatabase().insert(myDb.TABLE_PRICES, null, values);
     }
     public void updatePrice(String text) {
         ContentValues values = new ContentValues();
         values.put(myDb.COLUMN_PRICE, text);
-        long updateId = dbHelper.getWritableDatabase().update(myDb.TABLE_PRICES, values, myDb.COLUMN_ID + " = " + text, null);
+        long updateId = dbHelper.getWritableDatabase().update(myDb.TABLE_PRICES, values, myDb.COLUMN_ID + " = " + insertId, null);
     }
     public String getLastPrice(){
         Cursor cursor = dbHelper.getReadableDatabase().query(myDb.TABLE_PRICES, allPriceColumns, null, null, null, null, myDb.COLUMN_ID + " DESC", "1");
@@ -50,7 +51,7 @@ public class CountsDataSource {
         else lastPrice = "3.7";
         return lastPrice;
     }
-    public Boolean checkPrice(){
+    public Boolean checkForPrice(){
         Cursor cursor = dbHelper.getReadableDatabase().query(myDb.TABLE_PRICES, allPriceColumns, null, null, null, null, myDb.COLUMN_ID + " DESC", "1");
         if (cursor.moveToFirst()) {
             cursor.close();
