@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.xmstr.electrocount.Item;
@@ -131,11 +132,61 @@ public class StatisticFragment extends Fragment{
                 }).create().show();
                 break;
             case R.id.action_info:
-                Toast.makeText(getActivity(), "INFO", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
+                builder2.setTitle("О приложении").setMessage("Электросчетчик v.1.0").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).create().show();
                 break;
+            case R.id.action_changeprice:
+                if (dataSource.checkForPrice()) {
+                    new DialogFragment() {
+                        @Override
+                        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+                            getDialog().setTitle(R.string.edit_tariff_text);
+                            final View rootView = inflater.inflate(R.layout.dialog_editprice, container, false);
+                            final EditText editText = (EditText) rootView.findViewById(R.id.editText);
+                            TextView prevTariff = (TextView) rootView.findViewById(R.id.prevTariff);
+                            prevTariff.setText(dataSource.getLastPrice());
+                            editText.setSelection(editText.length());
+                            Button btnPositive = (Button) rootView.findViewById(R.id.btn_positive);
+                            Button btnNegative = (Button) rootView.findViewById(R.id.btn_negative);
+                            btnPositive.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if (checkPrice(editText)) {
+                                        dataSource.updatePrice(editText.getText().toString());
+                                        dismiss();
+                                    } else {
+                                        Toast.makeText(getActivity(), "Неправильный тариф", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                private boolean checkPrice(final EditText text) {
+                                    if (text.getText() == null
+                                            || text.getText().length() == 0)
+                                        return false;
+                                    else return true;
+                                }
+                            });
+                            btnNegative.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dismiss();
+                                }
+                            });
+                            return rootView;
+                        }
+                    }.show(getFragmentManager(), "dialog");
+                } else {
+                    Toast.makeText(getActivity(), "Тариф еще не введен", Toast.LENGTH_SHORT).show();
+                }
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

@@ -20,7 +20,7 @@
     <string name="new_count_title">Новое измерение</string>
     <string name="first_count_title">Первое измерение</string>
     <string name="menu_delete_all_text">Удалить все измерения</string>
-    <string name="menu_about_text">Справка</string>
+    <string name="menu_about_text">О приложении</string>
     <string name="menu_changetariff_text">Изменить тариф</string>
     <string name="edit_tariff_text">Смена тарифа</string>
 

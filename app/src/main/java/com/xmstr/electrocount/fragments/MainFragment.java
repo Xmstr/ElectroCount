@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Created by xmast_000 on 11.07.2015.
+ * Created by Xmstr. Thanks to Dany Win
  */
 public class MainFragment extends Fragment {
     private static final SimpleDateFormat ONLY_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
@@ -120,51 +120,48 @@ public class MainFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (dataSource.checkForPrice()){
-                new DialogFragment() {
-                    @Override
-                    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-                        getDialog().setTitle(R.string.new_count_title);
-                        final View rootView = inflater.inflate(R.layout.dialog, container, false);
-                        final EditText editText = (EditText) rootView.findViewById(R.id.editText);
-                        TextView prevNumber = (TextView) rootView.findViewById(R.id.prevNumber);
-                        prevNumber.setText(prepareNumber(dataSource.getLastItemNumber()));
-                        editText.setSelection(editText.length());
-                        Button btnPositive = (Button) rootView.findViewById(R.id.btn_positive);
-                        Button btnNegative = (Button) rootView.findViewById(R.id.btn_negative);
-                        btnPositive.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                if (checkNumber(editText)) {
-                                    String date = ONLY_DATE_FORMAT.format(System.currentTimeMillis());
-                                    dataSource.createItem(prepareNumber(editText.getText().toString()), date);
-                                    setNumber();
-                                    calculateCost();
-                                    dismiss();
-                                } else {
-                                    Toast.makeText(getActivity(), "Неверный показатель", Toast.LENGTH_SHORT).show();
+                if (dataSource.checkForPrice()) {
+                    new DialogFragment() {
+                        @Override
+                        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+                            getDialog().setTitle(R.string.new_count_title);
+                            final View rootView = inflater.inflate(R.layout.dialog, container, false);
+                            final EditText editText = (EditText) rootView.findViewById(R.id.editText);
+                            TextView prevNumber = (TextView) rootView.findViewById(R.id.prevNumber);
+                            prevNumber.setText(prepareNumber(dataSource.getLastItemNumber()));
+                            editText.setSelection(editText.length());
+                            Button btnPositive = (Button) rootView.findViewById(R.id.btn_positive);
+                            Button btnNegative = (Button) rootView.findViewById(R.id.btn_negative);
+                            btnPositive.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if (checkNumber(editText)) {
+                                        String date = ONLY_DATE_FORMAT.format(System.currentTimeMillis());
+                                        dataSource.createItem(prepareNumber(editText.getText().toString()), date);
+                                        setNumber();
+                                        calculateCost();
+                                        dismiss();
+                                    } else {
+                                        Toast.makeText(getActivity(), "Неверный показатель", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                            }
 
-                            private boolean checkNumber(final EditText text) {
-                                if (text.getText() == null
-                                        || text.getText().length() == 0
-                                        || ((Integer.parseInt(text.getText().toString())) <= Integer.parseInt(dataSource.getLastItemNumber())))
-                                    return false;
-                                else return true;
-                            }
-                        });
-                        btnNegative.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                dismiss();
-                            }
-                        });
-                        return rootView;
-                    }
-                }.show(getFragmentManager(), "dialog");
-            }
-            else {
+                                private boolean checkNumber(final EditText text) {
+                                    return !(text.getText() == null
+                                            || text.getText().length() == 0
+                                            || ((Integer.parseInt(text.getText().toString())) <= Integer.parseInt(dataSource.getLastItemNumber())));
+                                }
+                            });
+                            btnNegative.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dismiss();
+                                }
+                            });
+                            return rootView;
+                        }
+                    }.show(getFragmentManager(), "dialog");
+                } else {
                     new DialogFragment() {
                         @Override
                         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -191,11 +188,9 @@ public class MainFragment extends Fragment {
                                 }
 
                                 private boolean checkNumber(final EditText text) {
-                                    if (text.getText() == null
+                                    return !(text.getText() == null
                                             || text.getText().length() == 0
-                                            || ((Integer.parseInt(text.getText().toString())) <= Integer.parseInt(dataSource.getLastItemNumber())))
-                                        return false;
-                                    else return true;
+                                            || ((Integer.parseInt(text.getText().toString())) <= Integer.parseInt(dataSource.getLastItemNumber())));
                                 }
                             });
                             btnNegative.setOnClickListener(new View.OnClickListener() {
@@ -208,10 +203,8 @@ public class MainFragment extends Fragment {
                         }
 
                         private boolean checkPrice(EditText text) {
-                            if (text.getText() == null
-                                    || text.getText().length() == 0)
-                                return false;
-                            else return true;
+                            return !(text.getText() == null
+                                    || text.getText().length() == 0);
                         }
                     }.show(getFragmentManager(), "dialog");
                 }
@@ -265,7 +258,13 @@ public class MainFragment extends Fragment {
                 }).create().show();
                 break;
             case R.id.action_info:
-                Toast.makeText(getActivity(), "INFO", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
+                builder2.setTitle("О приложении").setMessage("Электросчетчик v.1.0").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).create().show();
                 break;
             case R.id.action_changeprice:
                 if (dataSource.checkForPrice()) {
@@ -293,10 +292,8 @@ public class MainFragment extends Fragment {
                                 }
 
                                 private boolean checkPrice(final EditText text) {
-                                    if (text.getText() == null
-                                            || text.getText().length() == 0)
-                                        return false;
-                                    else return true;
+                                    return !(text.getText() == null
+                                            || text.getText().length() == 0);
                                 }
                             });
                             btnNegative.setOnClickListener(new View.OnClickListener() {
@@ -308,8 +305,7 @@ public class MainFragment extends Fragment {
                             return rootView;
                         }
                     }.show(getFragmentManager(), "dialog");
-                }
-                else {
+                } else {
                     Toast.makeText(getActivity(), "Тариф еще не введен", Toast.LENGTH_SHORT).show();
                 }
             default:
@@ -317,7 +313,6 @@ public class MainFragment extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
-
 
 
 }
