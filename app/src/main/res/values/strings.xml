@@ -3,7 +3,7 @@
 
     <string name="action_settings">Settings</string>
     <string name="resultCountNumber">000000</string>
-    <string name="countedLabelText">Натикало:</string>
+    <string name="countedLabelText">На счетчике:</string>
     <string name="countedNumberMain">000000</string>
     <string name="whatCostLabelText">На сумму:</string>
     <string name="costMainText">000 \u20bd</string>
@@ -23,5 +23,6 @@
     <string name="menu_about_text">О приложении</string>
     <string name="menu_changetariff_text">Изменить тариф</string>
     <string name="edit_tariff_text">Смена тарифа</string>
+    <string name="main_difference_text">натикало:</string>
 
 </resources>

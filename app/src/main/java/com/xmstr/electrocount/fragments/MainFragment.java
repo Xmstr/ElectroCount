@@ -36,6 +36,7 @@ public class MainFragment extends Fragment {
     CountsDataSource dataSource;
     ItemsAdapter adapter;
     TextView mainNumber;
+    TextView differenceNumber;
     TextView mainCost;
     TextView adviceText;
 
@@ -79,6 +80,7 @@ public class MainFragment extends Fragment {
 
     private void setNumber() {
         mainNumber.setText(prepareNumber(dataSource.getLastItemNumber()));
+        differenceNumber.setText(Integer.parseInt(dataSource.getLastItemNumber())-Integer.parseInt(dataSource.getPrevItemNumber()));
     }
 
     private void setAdvice() {
@@ -113,6 +115,7 @@ public class MainFragment extends Fragment {
         // MAIN NUMBER
         mainNumber = (TextView) v.findViewById(R.id.mainNumberTextView);
         adviceText = (TextView) v.findViewById(R.id.adviceText);
+        differenceNumber = (TextView)v.findViewById(R.id.mainDifferenceNumber);
         setNumber();
         calculateCost();
         setAdvice();
