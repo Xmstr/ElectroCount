@@ -39,6 +39,7 @@ public class MainFragment extends Fragment {
     TextView differenceNumber;
     TextView mainCost;
     TextView adviceText;
+    int difNumber;
 
     public MainFragment() {
         //EMPTY CONSTRUCTOR
@@ -80,7 +81,8 @@ public class MainFragment extends Fragment {
 
     private void setNumber() {
         mainNumber.setText(prepareNumber(dataSource.getLastItemNumber()));
-        differenceNumber.setText(Integer.parseInt(dataSource.getLastItemNumber())-Integer.parseInt(dataSource.getPrevItemNumber()));
+        difNumber = (Integer.parseInt(dataSource.getLastItemNumber()))-(Integer.parseInt(dataSource.getPrevItemNumber()));
+        differenceNumber.setText(String.valueOf(difNumber));
     }
 
     private void setAdvice() {
