@@ -133,7 +133,7 @@ public class StatisticFragment extends Fragment{
                 break;
             case R.id.action_info:
                 AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
-                builder2.setTitle("О приложении").setMessage("Электросчетчик v.1.0").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                builder2.setTitle("О приложении").setMessage("Электросчетчик v.1.1").setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 

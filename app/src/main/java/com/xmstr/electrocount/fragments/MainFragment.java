@@ -1,6 +1,8 @@
 package com.xmstr.electrocount.fragments;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -18,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
+import com.xmstr.electrocount.AlarmReceiver;
+import com.xmstr.electrocount.AlarmService;
 import com.xmstr.electrocount.R;
 import com.xmstr.electrocount.adapter.ItemsAdapter;
 import com.xmstr.electrocount.db.CountsDataSource;
@@ -263,13 +267,16 @@ public class MainFragment extends Fragment {
                 }).create().show();
                 break;
             case R.id.action_info:
-                AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
+                /*AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
                 builder2.setTitle("О приложении").setMessage("Электросчетчик v.1.0").setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
-                }).create().show();
+                }).create().show();*/
+                Context context = getActivity();
+                Intent alarmIntent = new Intent(context, AlarmService.class);
+                context.startService(alarmIntent);
                 break;
             case R.id.action_changeprice:
                 if (dataSource.checkForPrice()) {

@@ -1,0 +1,143 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rel_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="@string/countedLabelText"
+        android:textSize="30sp" />
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="bottom|right"
+        android:src="@drawable/ic_add_white_24dp"
+        fab:fab_colorNormal="@color/accent"
+        fab:fab_colorPressed="@color/primary_light"
+        fab:fab_colorRipple="@color/primary_light" />
+
+    <TableLayout
+        android:id="@+id/tableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/mainNumberTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/countedNumberMain"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="90sp" />
+
+            <ImageButton
+                android:id="@+id/statisticButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:background="@null"
+                android:clickable="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/statistika_rynka" />
+
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout
+        android:id="@+id/tableLayout_second"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tableLayout"
+        android:layout_centerHorizontal="true">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/mainDifference"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/main_difference_text"
+                android:textSize="30sp"
+                android:layout_marginBottom="2dp" />
+
+            <TextView
+                android:id="@+id/mainDifferenceNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/countedNumberMain"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="30sp" />
+        </TableRow>
+    </TableLayout>
+
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tableLayout_second"
+        android:layout_centerHorizontal="true"
+        android:text="@string/whatCostLabelText"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/mainCostTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView3"
+        android:layout_centerHorizontal="true"
+        android:text="@string/costMainText"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="60sp" />
+
+    <ImageButton
+        android:id="@+id/adviceButton"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_below="@+id/mainCostTextView"
+        android:layout_centerHorizontal="true"
+        android:background="@null"
+        android:longClickable="false"
+        android:maxHeight="60dp"
+        android:maxWidth="60dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/advice_icon" />
+
+    <TextView
+        android:id="@+id/adviceText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/adviceButton"
+        android:layout_centerHorizontal="true"
+        android:gravity="center|center_horizontal"
+        android:text="Совет"
+        android:textAlignment="gravity"
+        android:textSize="35sp" />
+
+</RelativeLayout>
