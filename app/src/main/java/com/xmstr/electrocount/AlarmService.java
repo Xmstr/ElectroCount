@@ -39,13 +39,13 @@ public class AlarmService extends Service {
                         // большая картинка
                 //.setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.hungrycat))
                         //.setTicker(res.getString(R.string.warning)) // текст в строке состояния
-                .setTicker("Последнее китайское предупреждение!")
+                .setTicker("Уведомление")
                 .setWhen(System.currentTimeMillis())
                 .setAutoCancel(true)
                         //.setContentTitle(res.getString(R.string.notifytitle)) // Заголовок уведомления
                 .setContentTitle("Напоминание")
                         //.setContentText(res.getString(R.string.notifytext))
-                .setContentText("Пора покормить кота"); // Текст уведомления
+                .setContentText("ШИНДОВС 10"); // Текст уведомления
 
         // Notification notification = builder.getNotification(); // до API 16
         Notification notification = builder.build();
