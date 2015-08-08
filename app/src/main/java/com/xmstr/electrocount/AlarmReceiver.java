@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.SystemClock;
 
 import java.util.Calendar;
 
@@ -19,21 +18,36 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         System.out.println("RECEIVER STARTED");
-        if (intent.getAction().equals("android.intent.action.AIRPLANE_MODE")) {
-            alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-            System.out.println("RECEIVER ACTION OK");
-            Intent intent1 = new Intent(context, AlarmService.class);
-            alarmIntent = PendingIntent.getBroadcast(context, 0, intent1, 0);
+        if (checkForDay()) {
+            alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            Intent serviceIntent = new Intent(context, AlarmService.class);
+            alarmIntent = PendingIntent.getService(context, 0, serviceIntent, 0);
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis());
-            //calendar.set(Calendar.HOUR_OF_DAY, 6);
-            //calendar.set(Calendar.MINUTE, 11);
-            long futureInMillis = SystemClock.elapsedRealtime() + 5000;
-            //alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-            //        AlarmManager.INTERVAL_DAY, alarmIntent);
-            //alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-            //        1000 * 60 * 1, alarmIntent);
-            alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, alarmIntent);
+            calendar.set(Calendar.HOUR_OF_DAY, 19);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+            System.out.println("ALARM SET");
+        } else {
+            alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            Intent broadcastIntent = new Intent(context, AlarmReceiver.class);
+            PendingIntent restartReceiverIntent = PendingIntent.getBroadcast(context, 0, broadcastIntent, 0);
+            alarmMgr.cancel(restartReceiverIntent);
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, 15);
+            calendar.add(Calendar.DATE, 1);
+            // schedule the alarm
+            alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), restartReceiverIntent);
+            System.out.println("ALARM SET RECHECK NEX DAY");
         }
+    }
+
+    private boolean checkForDay() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        if (calendar.get(Calendar.DATE) == 26 && calendar.get(Calendar.HOUR_OF_DAY) <= 18) {
+            return true;
+        } else return false;
     }
 }

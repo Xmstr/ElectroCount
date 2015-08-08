@@ -1,8 +1,10 @@
 package com.xmstr.electrocount.fragments;
 
-import android.content.Context;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -21,7 +23,6 @@ import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.xmstr.electrocount.AlarmReceiver;
-import com.xmstr.electrocount.AlarmService;
 import com.xmstr.electrocount.R;
 import com.xmstr.electrocount.adapter.ItemsAdapter;
 import com.xmstr.electrocount.db.CountsDataSource;
@@ -85,7 +86,7 @@ public class MainFragment extends Fragment {
 
     private void setNumber() {
         mainNumber.setText(prepareNumber(dataSource.getLastItemNumber()));
-        difNumber = (Integer.parseInt(dataSource.getLastItemNumber()))-(Integer.parseInt(dataSource.getPrevItemNumber()));
+        difNumber = (Integer.parseInt(dataSource.getLastItemNumber())) - (Integer.parseInt(dataSource.getPrevItemNumber()));
         differenceNumber.setText(String.valueOf(difNumber));
     }
 
@@ -121,7 +122,7 @@ public class MainFragment extends Fragment {
         // MAIN NUMBER
         mainNumber = (TextView) v.findViewById(R.id.mainNumberTextView);
         adviceText = (TextView) v.findViewById(R.id.adviceText);
-        differenceNumber = (TextView)v.findViewById(R.id.mainDifferenceNumber);
+        differenceNumber = (TextView) v.findViewById(R.id.mainDifferenceNumber);
         setNumber();
         calculateCost();
         setAdvice();
@@ -247,6 +248,8 @@ public class MainFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        PackageManager pm;
+        ComponentName componentName;
         switch (item.getItemId()) {
             case R.id.action_delete_all:
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -267,16 +270,29 @@ public class MainFragment extends Fragment {
                 }).create().show();
                 break;
             case R.id.action_info:
-                /*AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
-                builder2.setTitle("О приложении").setMessage("Электросчетчик v.1.0").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
+                builder2.setTitle("О приложении").setMessage("Электросчетчик v.1.2").setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
-                }).create().show();*/
-                Context context = getActivity();
-                Intent alarmIntent = new Intent(context, AlarmService.class);
-                context.startService(alarmIntent);
+                }).create().show();
+                break;
+            case R.id.action_stopnoti:
+                pm = getActivity().getPackageManager();
+                componentName = new ComponentName(getActivity(), AlarmReceiver.class);
+                pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                        PackageManager.DONT_KILL_APP);
+                Toast.makeText(getActivity(), "Уведомления отключены", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.action_startnoti:
+                pm = getActivity().getPackageManager();
+                componentName = new ComponentName(getActivity(), AlarmReceiver.class);
+                pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                        PackageManager.DONT_KILL_APP);
+                Intent broadcast = new Intent(getActivity(), AlarmReceiver.class);
+                getActivity().sendBroadcast(broadcast);
+                Toast.makeText(getActivity(), "Уведомления включены", Toast.LENGTH_LONG).show();
                 break;
             case R.id.action_changeprice:
                 if (dataSource.checkForPrice()) {
@@ -326,5 +342,22 @@ public class MainFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        if (isNotiEnabled()) {
+            menu.findItem(R.id.action_startnoti).setVisible(false);
+            menu.findItem(R.id.action_stopnoti).setVisible(true);
+        } else {
+            menu.findItem(R.id.action_startnoti).setVisible(true);
+            menu.findItem(R.id.action_stopnoti).setVisible(false);
+        }
+        super.onPrepareOptionsMenu(menu);
+    }
 
+    private boolean isNotiEnabled() {
+        PackageManager pm = getActivity().getPackageManager();
+        Intent testIntent = new Intent(getActivity(), AlarmReceiver.class);
+        List<ResolveInfo> resolveInfo = pm.queryBroadcastReceivers(testIntent, PackageManager.MATCH_DEFAULT_ONLY);
+        return resolveInfo.size() > 0;
+    }
 }

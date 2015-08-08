@@ -21,7 +21,7 @@
         <receiver android:name=".AlarmReceiver"
             android:enabled="true">
             <intent-filter>
-                <action android:name="android.intent.action.AIRPLANE_MODE"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
         <service android:name=".AlarmService">
