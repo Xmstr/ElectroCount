@@ -32,7 +32,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         } else {
             alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             Intent broadcastIntent = new Intent(context, AlarmReceiver.class);
-            PendingIntent restartReceiverIntent = PendingIntent.getBroadcast(context, 0, broadcastIntent, 0);
+            PendingIntent restartReceiverIntent = PendingIntent.getBroadcast(context, 0, broadcastIntent, PendingIntent.FLAG_CANCEL_CURRENT);
             alarmMgr.cancel(restartReceiverIntent);
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, 15);
